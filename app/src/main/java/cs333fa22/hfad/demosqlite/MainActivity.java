@@ -15,13 +15,15 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private EmployeeListAdapter empListAdapter;
-
+    private DBHelper dbHelper;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbHelper = new DBHelper(this);
 
         FloatingActionButton fabAdd = findViewById(R.id.fab);
         empListAdapter = setUpRecyclerView();
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddEmployeeDialog dialog = new AddEmployeeDialog();//(empListAdapter);
+                AddEmployeeDialog dialog = new AddEmployeeDialog(empListAdapter);
                 dialog.show(getSupportFragmentManager(), "");
             }
         });
@@ -42,7 +44,9 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView rv = findViewById(R.id.recyclerView);
 
         EmployeeListAdapter empListAdapter = new EmployeeListAdapter(this);
-        empListAdapter.setEmployees(new ArrayList<Employee>());
+
+        ArrayList<Employee> allEmps = dbHelper.fetchAllEmployees();
+        empListAdapter.setEmployees(allEmps);
 
         rv.setAdapter(empListAdapter);
 
